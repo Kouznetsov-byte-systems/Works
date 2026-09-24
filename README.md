@@ -21,7 +21,7 @@ A collection of lightweight, low-overhead utility components and crates optimize
 
 ### 4. Thread-Safe GUI Log Interceptor (scripts/log_interceptor.py)
 
-* **Purpose:** Concurrent memory bridge engineered to pipe system logging payloads directly into graphical interface telemetry buffers without causing main тред lock contention.
+* **Purpose:** Concurrent memory bridge engineered to pipe system logging payloads directly into graphical interface telemetry buffers without causing main thread lock contention.
 * **Logic:** Implements synchronized inner buffers utilizing relaxed thread ordering primitives to ensure nominal performance constraints under peak IOPS load.
 
 ### 5. Lightweight Thread-Safe Linux Logging & Diagnostics Utility (scripts/linux_logger.py)

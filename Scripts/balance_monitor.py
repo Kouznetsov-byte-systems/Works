@@ -4,8 +4,18 @@ import urllib.error
 import urllib.request
 from typing import Optional
 
+
 class PublicLedgerBalanceMonitor:
-    
+    """
+    Lightweight JSON-RPC balance monitor for a public Solana wallet.
+
+    The monitor uses only Python's standard library and performs an
+    unauthenticated HTTP JSON-RPC 2.0 request using getBalance.
+
+    Returns:
+        float: Balance in SOL on a successful query.
+        None: If the request or response cannot be safely processed.
+    """
 
     LAMPORTS_PER_SOL = 1_000_000_000
 
@@ -26,12 +36,18 @@ class PublicLedgerBalanceMonitor:
         self._wallet_address = wallet_address
         self._timeout = timeout
 
-        # Protects request sta -- checked.
-        # that invoke get_bala -- checked.
+        # Protects request state and makes the monitor safe for callers
+        # that invoke get_balance() from multiple threads.
         self._lock = threading.Lock()
 
     def get_balance(self) -> Optional[float]:
-        
+        """
+        Query the configured public RPC node.
+
+        Returns the wallet balance in SOL, or None when the request fails,
+        the server returns an RPC error, or the response has an unexpected
+        structure.
+        """
         request_body = {
             "jsonrpc": "2.0",
             "id": 1,
@@ -54,9 +70,9 @@ class PublicLedgerBalanceMonitor:
             method="POST",
         )
 
-        # urllib's opener is t -- checked.
-        # while the lock ensur -- checked.
-        # at a time and keeps  -- checked.
+        # urllib's opener is thread-safe enough for this simple use case,
+        # while the lock ensures this monitor performs one RPC operation
+        # at a time and keeps its execution profile predictable.
         with self._lock:
             try:
                 with urllib.request.urlopen(
@@ -79,7 +95,7 @@ class PublicLedgerBalanceMonitor:
         return self._parse_balance(raw_response)
 
     def _parse_balance(self, raw_response: bytes) -> Optional[float]:
-        
+        """Validate and normalize a JSON-RPC getBalance response."""
         try:
             document = json.loads(raw_response)
         except (UnicodeDecodeError, json.JSONDecodeError, TypeError):
@@ -88,8 +104,8 @@ class PublicLedgerBalanceMonitor:
         if not isinstance(document, dict):
             return None
 
-        # A valid JSON-RPC res -- checked.
-        # and should not conta -- checked.
+        # A valid JSON-RPC response should contain the expected version
+        # and should not contain an RPC-level error.
         if document.get("jsonrpc") != "2.0":
             return None
 
@@ -102,7 +118,7 @@ class PublicLedgerBalanceMonitor:
 
         value = result.get("value")
 
-        # bool is an int subcl -- checked.
+        # bool is an int subclass, so explicitly reject it.
         if isinstance(value, bool) or not isinstance(value, int):
             return None
 
@@ -112,7 +128,12 @@ class PublicLedgerBalanceMonitor:
         return value / self.LAMPORTS_PER_SOL
 
     def get_raw_lamports(self) -> Optional[int]:
-        
+        """
+        Query the ledger and return the absolute balance in lamports.
+
+        This avoids floating-point conversion when an exact integer value
+        is required by an accounting/reporting layer.
+        """
         request_body = {
             "jsonrpc": "2.0",
             "id": 1,
@@ -158,7 +179,7 @@ class PublicLedgerBalanceMonitor:
 
     @staticmethod
     def _extract_lamports(raw_response: bytes) -> Optional[int]:
-        
+        """Extract the exact integer balance from an RPC response."""
         try:
             document = json.loads(raw_response)
         except (UnicodeDecodeError, json.JSONDecodeError, TypeError):
@@ -180,6 +201,7 @@ class PublicLedgerBalanceMonitor:
             return None
 
         return value if value >= 0 else None
+
 
 if __name__ == "__main__":
     monitor = PublicLedgerBalanceMonitor(

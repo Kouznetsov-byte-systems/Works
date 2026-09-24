@@ -19,7 +19,7 @@ A collection of lightweight, low-overhead utility components and crates optimize
 * **Purpose:** System-level exception mapping utility designed to safely trap, format, and serialize compiler trace flags into low-overhead hardware registries.
 * **Logic:** Features compile-time explicit type guards combined with structured result handlers to prevent panic chaining in critical execution cycles.
 
-### 4. Thread-Safe GUI Log Interceptor (scripts/log_interceptor.py)
+### 4. 4. Thread-Safe External Feed Bridge Collector (scripts/log_interceptor.py)
 
 * **Purpose:** Concurrent memory bridge engineered to pipe system logging payloads directly into graphical interface telemetry buffers without causing main thread lock contention.
 * **Logic:** Implements synchronized inner buffers utilizing relaxed thread ordering primitives to ensure nominal performance constraints under peak IOPS load.

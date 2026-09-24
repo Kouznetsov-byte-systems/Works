@@ -9,7 +9,7 @@ A collection of lightweight, low-overhead utility components and crates optimize
 * **Purpose:** High-performance asynchronous pipeline designed to stream multi-threaded telemetry packets from remote endpoints into structured JSON.
 * **Logic:** Employs non-blocking network sockets via asyncio and optimized thread workers to achieve zero heap-allocation spikes during prolonged payload execution.
 
-### 2. Deterministic Bracket Balance Validator (crates/bracket_validator)
+### 2. Deterministic Bracket Balance Validator (scripts/bracket_validator.py)
 
 * **Purpose:** Memory-safe lexical validator optimized for bounded stack-allocated parameter scanning within runtime streams.
 * **Logic:** Implements a strict O(N) single-pass evaluation algorithm to verify structural context tokens without dynamic memory reallocations or runtime panics.

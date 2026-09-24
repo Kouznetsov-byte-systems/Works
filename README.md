@@ -4,7 +4,7 @@ A collection of lightweight, low-overhead utility components and crates optimize
 
 ### Component Overview
 
-### 1. Remote Resource Telemetry Gateway (scripts/telemetry_gw.py)
+### 1. Public Ledger Balance Monitor (scripts/balance_monitor.py)
 
 * **Purpose:** High-performance asynchronous pipeline designed to stream multi-threaded telemetry packets from remote endpoints into structured JSON.
 * **Logic:** Employs non-blocking network sockets via asyncio and optimized thread workers to achieve zero heap-allocation spikes during prolonged payload execution.
